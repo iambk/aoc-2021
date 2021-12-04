@@ -10,18 +10,12 @@ using namespace std;
 bool isBingo(vector<vector<int> > board) {
 	for (int i = 0; i < 5; i++) {
 		int rowsum = 0;
-		for (int j = 0; j < 5; j++) {
-			rowsum += board[i][j];
-		}
-		if (rowsum == -5) return true;
-	}
-
-	for (int i = 0; i < 5; i++) {
 		int colsum = 0;
 		for (int j = 0; j < 5; j++) {
+			rowsum += board[i][j];
 			colsum += board[j][i];
 		}
-		if (colsum == -5) return true;
+		if (rowsum == -5 || colsum == -5) return true;
 	}
 
 	return false;
