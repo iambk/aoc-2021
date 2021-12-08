@@ -9,46 +9,29 @@
 using namespace std;
 
 int part_one(vector<string> input) {
-	int one = 2, four = 4, seven = 3, eight = 7;
-	int onecount = 0, fourcount = 0, sevencount = 0, eightcount = 0;
-
-	for (int i = input.size() - 1; i >= input.size() - 4; i--) {
-		if (input[i].size() == one) onecount++;
-		else if (input[i].size() == four) fourcount++;
-		else if (input[i].size() == seven) sevencount++;
-		else if (input[i].size() == eight) eightcount++;
+	int count = 0, n = input.size();
+	for (int i = n - 4; i < n; i++) {
+		int size = input[i].size();
+		if (size == 2 || size == 3 || size == 4 || size == 7) count++;
 	}
 
-	return onecount + fourcount + sevencount + eightcount;
+	return count;
 }
 
-int part_two(vector<string> input) {
-	map<string, char> digit_mapping = {
-		{"abcefg", '0'},
-		{"cf", '1'},
-		{"acdeg", '2'},
-		{"acdfg", '3'},
-		{"bcdf", '4'},
-		{"abdfg", '5'},
-		{"abdefg", '6'},
-		{"acf", '7'},
-		{"abcdefg", '8'},
-		{"abcdfg", '9'}
-	};
-
+void decode_and_map_signal(vector<string> input, map<char, char> &char_mapping) {
 	map<char, int> frequency;
 	string len2input, len3input, len4input, len7input;
 	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < input[i].size(); j++) {
+		int size = input[i].size();
+		for (int j = 0; j < size; j++) {
 			frequency[input[i][j]]++;
 		}
-		if (input[i].size() == 2) len2input = input[i];
-		else if (input[i].size() == 3) len3input = input[i];
-		else if (input[i].size() == 4) len4input = input[i];
-		else if (input[i].size() == 7) len7input = input[i];
+		if (size == 2) len2input = input[i];
+		else if (size == 3) len3input = input[i];
+		else if (size == 4) len4input = input[i];
+		else if (size == 7) len7input = input[i];
 	}
 
-	map<char, char> char_mapping;
 	map<char, int>::iterator it = frequency.begin();
 	for (; it != frequency.end(); it++) {
 		if (it->second == 4) {
@@ -62,11 +45,11 @@ int part_two(vector<string> input) {
 		}
 	}
 
-	if (char_mapping.find(len2input[0]) == char_mapping.end()) {
-		char_mapping.insert(make_pair(len2input[0], 'c'));
-	}
-	else {
-		char_mapping.insert(make_pair(len2input[1], 'c'));
+	for (int i = 0; i < 2; i++) {
+		if (char_mapping.find(len2input[i]) == char_mapping.end()) {
+			char_mapping.insert(make_pair(len2input[i], 'c'));
+			break;
+		}
 	}
 
 	for (int i = 0; i < 3; i++) {
@@ -89,9 +72,15 @@ int part_two(vector<string> input) {
 			break;
 		}
 	}
+}
+
+int part_two(vector<string> input, map<string, char> digit_mapping) {
+	map<char, char> char_mapping;
+	decode_and_map_signal(input, char_mapping);
 
 	string output;
-	for (int i = input.size() - 4; i < input.size(); i++) {
+	int size = input.size();
+	for (int i = size - 4; i < size; i++) {
 		string num;
 		for (int j = 0; j < input[i].size(); j++) {
 			num.push_back(char_mapping[input[i][j]]);
@@ -104,15 +93,27 @@ int part_two(vector<string> input) {
 }
 
 int main() {
+	map<string, char> digit_mapping = {
+		{"abcefg", '0'},
+		{"cf", '1'},
+		{"acdeg", '2'},
+		{"acdfg", '3'},
+		{"bcdf", '4'},
+		{"abdfg", '5'},
+		{"abdefg", '6'},
+		{"acf", '7'},
+		{"abcdefg", '8'},
+		{"abcdfg", '9'}
+	};
+
 	vector<string> input;
 
-	int part_one_total = 0;
-	int part_two_total = 0;
+	int part_one_total = 0, part_two_total = 0;
 	for (string data; getline(cin, data); ) {
 		boost::split(input, data, boost::is_any_of(" "));
 
 		part_one_total += part_one(input);
-		part_two_total += part_two(input);
+		part_two_total += part_two(input, digit_mapping);
 	}
 
 	cout << part_one_total << endl;
