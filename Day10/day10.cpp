@@ -4,62 +4,48 @@
 #include <algorithm>
 #include <map>
 #include <stack>
-#include <boost/algorithm/string.hpp>
-#include <numeric>
 
 using namespace std;
-typedef long long int lli;
 
-lli part_one(string data) {
+int part_one(string data) {
 	stack<char> ss;
-	map<char, lli> mm = {
+	map<char, int> mm = {
 		{')', 3},
 		{']', 57},
 		{'}', 1197},
 		{'>', 25137}
 	};
 	
-	lli total = 0;
+	int total = 0;
 	for (int i = 0; i < data.size(); i++) {
 		if (data[i] == '(' || data[i] == '[' || data[i] == '{' || data[i] == '<') ss.push(data[i]);
 		else {
 			char top = ss.top();
 			if (data[i] == ')') {
 				if(!ss.empty() && top == '(') ss.pop();
-				else {
-					total += mm[data[i]];
-					break;
-				}
+				else return mm[data[i]];
 			}
 			else if (data[i] == ']') {
 				if(!ss.empty() && top == '[') ss.pop();
-				else {total += mm[data[i]];
-					break;
-				}
+				else return mm[data[i]];
 			}
 			else if (data[i] == '}') {
 				if(!ss.empty() && top == '{') ss.pop();
-				else {total += mm[data[i]];
-					break;
-				}
+				else return mm[data[i]];
 			}
 			else {
 				if(!ss.empty() && top == '<') ss.pop();
-				else {
-					total += mm[data[i]];
-					break;
-				}
+				else return mm[data[i]];
 			}
-
 		}
-
 	}
+
 	return total;
 }
 
-lli part_two(string data) {
+long int part_two(string data) {
 	stack<char> ss;
-	map<char, lli> mm = {
+	map<char, int> mm = {
 		{'(', 1},
 		{'[', 2},
 		{'{', 3},
@@ -72,55 +58,47 @@ lli part_two(string data) {
 			char top = ss.top();
 			if (data[i] == ')') {
 				if(!ss.empty() && top == '(') ss.pop();
-				else {
-					return 0;
-				}
+				else return 0;
 			}
 			else if (data[i] == ']') {
 				if(!ss.empty() && top == '[') ss.pop();
-				else {
-					return 0;
-				}
+				else return 0;
 			}
 			else if (data[i] == '}') {
 				if(!ss.empty() && top == '{') ss.pop();
-				else {
-					return 0;
-				}
+				else return 0;
 			}
 			else {
 				if(!ss.empty() && top == '<') ss.pop();
-				else {
-					return 0;
-				}
+				else return 0;
 			}
-
 		}
 	}
 
-	lli total = 0;
+	long int total = 0;
 	while (!ss.empty()) {
 		char top = ss.top();
-		total = total * 5 + mm[top];
+		total = static_cast<long int>(total) * 5 + mm[top];
 		ss.pop();
 	}
 	return total;
 }
 
 int main() {
-	lli partonetotal = 0;
-	vector<lli> parttwo;
+	int part_one_total = 0;
+	long int part_two_score;
+	vector<long int> part_two_scores;
 	for (string data; getline(cin, data);) {
-		partonetotal += part_one(data);
-		lli total = part_two(data);
-		if (total) {
-			parttwo.push_back(total);
+		part_one_total += part_one(data);
+		part_two_score = part_two(data);
+		if (part_two_score) {
+			part_two_scores.push_back(part_two_score);
 		}
 	}
-	sort(parttwo.begin(), parttwo.end());
+	sort(part_two_scores.begin(), part_two_scores.end());
 
-	cout << partonetotal << endl;
-	cout << parttwo[parttwo.size()/2] << endl;
+	cout << part_one_total << endl;
+	cout << part_two_scores[part_two_scores.size()/2] << endl;
 
 	return 0;
 }
